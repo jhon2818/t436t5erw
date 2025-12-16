@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Clique Dinâmico com Tempo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div id="main-content">
+        
+        <div id="game-container">
+            <div id="botao-alvo"></div>
+        </div>
+
+        <div id="side-info">
+            
+            <div id="placar">
+                Tempo: <span id="tempo-restante">60</span>s <br>
+                Pontuação: <span id="pontuacao">0</span> <br> 
+                Velocidade: <span id="intervalo-ms">1000</span> ms
+            </div>
+            
+            <button id="iniciar-jogo">Iniciar Jogo</button>
+
+        </div>
+
+    </div>
+    
+    <script>
+        const botaoAlvo = document.getElementById('botao-alvo');
+        const iniciarJogoBtn = document.getElementById('iniciar-jogo');
+        const pontuacaoSpan = document.getElementById('pontuacao');
+        const intervaloSpan = document.getElementById('intervalo-ms');
+        const tempoRestanteSpan = document.getElementById('tempo-restante');
+        const container = document.getElementById('game-container');
+
+        // --- Configurações do Jogo ---
+        const TEMPO_INICIAL_SEGUNDOS = 60; // 1 minuto
+        const BONUS_TEMPO_SEGUNDOS = 3;  // Tempo adicionado a cada acerto
+        const REDUCAO_INTERVALO = 50;    // Aceleração por acerto (em ms)
+        const INTERVALO_MINIMO = 100;    // Limite de velocidade (em ms)
+
+        const cores = [
+            'red', '#00aaff', '#4cd964', '#ff9500', '#a020f0'
+        ];
+        // -------------------------
+
+        let pontuacao = 0;
+        let intervaloAtual = 1000; 
+        let indiceCor = 0; 
+
+        let tempoRestante = TEMPO_INICIAL_SEGUNDOS;
+        let intervalID; // ID para o movimento
+        let timerID;    // ID para o contador de tempo (o cronômetro)
+
+
+        // --- Funções de Lógica do Jogo ---
+
+        function gerarPosicaoAleatoria() {
+            const larguraMax = container.clientWidth - 50; 
+            const alturaMax = container.clientHeight - 50;
+
+            const randomX = Math.floor(Math.random() * larguraMax);
+            const randomY = Math.floor(Math.random() * alturaMax);
+            
+            botaoAlvo.style.left = randomX + 'px';
+            botaoAlvo.style.top = randomY + 'px';
+            botaoAlvo.style.display = 'block'; 
+        }
+
+        function moverBotaoContinuamente() {
+            clearInterval(intervalID);
+            
+            intervalID = setInterval(gerarPosicaoAleatoria, intervaloAtual);
+            
+            botaoAlvo.style.transition = `left ${intervaloAtual / 1000}s ease-out, top ${intervaloAtual / 1000}s ease-out, background-color 0.2s`;
+
+            intervaloSpan.textContent = intervaloAtual;
+        }
+
+        function trocarCorBotao() {
+            const novaCor = cores[indiceCor];
+            botaoAlvo.style.backgroundColor = novaCor;
+            indiceCor = (indiceCor + 1) % cores.length;
+        }
+
+        function atualizarContador() {
+            tempoRestante--;
+            tempoRestanteSpan.textContent = tempoRestante;
+
+            if (tempoRestante <= 0) {
+                fimDeJogo();
+            }
+        }
+        
+        function iniciarTimer() {
+             // Inicia o contador regressivo que atualiza a cada 1 segundo (1000ms)
+            timerID = setInterval(atualizarContador, 1000);
+        }
+
+        function fimDeJogo() {
+            clearInterval(timerID);
+            clearInterval(intervalID);
+            
+            botaoAlvo.style.display = 'none'; // Esconde o botão
+            iniciarJogoBtn.style.display = 'block'; // Mostra o botão de iniciar
+
+            alert(`FIM DE JOGO! Tempo esgotado. Sua pontuação final foi: ${pontuacao}!`);
+        }
+
+
+        function handleClique() {
+            // Ação: Adiciona tempo bônus
+            tempoRestante += BONUS_TEMPO_SEGUNDOS;
+            tempoRestanteSpan.textContent = tempoRestante; // Atualiza o placar imediatamente
+
+            // Ação: Troca a cor
+            trocarCorBotao();
+
+            // Ação: Aumenta a pontuação
+            pontuacao++;
+            pontuacaoSpan.textContent = pontuacao;
+
+            // Ação: Acelera o botão
+            if (intervaloAtual > INTERVALO_MINIMO) {
+                intervaloAtual -= REDUCAO_INTERVALO;
+            } else {
+                 intervaloAtual = INTERVALO_MINIMO;
+            }
+
+            // Reinicia o movimento com a nova e menor velocidade
+            moverBotaoContinuamente();
+            
+            // Move o botão imediatamente para o próximo local
+            gerarPosicaoAleatoria();
+        }
+        
+        function iniciarJogo() {
+            // Limpa timers e intervalos anteriores, caso existam
+            clearInterval(timerID);
+            clearInterval(intervalID);
+
+            iniciarJogoBtn.style.display = 'none';
+            container.style.overflow = 'hidden'; 
+            botaoAlvo.style.cursor = 'pointer';
+            
+            // Reseta todos os valores
+            pontuacao = 0;
+            intervaloAtual = 1000;
+            indiceCor = 0; 
+            tempoRestante = TEMPO_INICIAL_SEGUNDOS;
+            
+            pontuacaoSpan.textContent = pontuacao;
+            tempoRestanteSpan.textContent = tempoRestante;
+            
+            trocarCorBotao(); 
+            iniciarTimer(); // Inicia o contador de tempo
+            moverBotaoContinuamente();
+            gerarPosicaoAleatoria();
+        }
+
+        // --- Event Listeners ---
+        
+        botaoAlvo.addEventListener('click', handleClique);
+        iniciarJogoBtn.addEventListener('click', iniciarJogo);
+        
+        // Configuração inicial
+        botaoAlvo.style.display = 'block';
+    </script>
+</body>
+</html>

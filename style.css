@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #333; 
+}
+
+#main-content {
+    display: flex;
+    gap: 40px; 
+    align-items: flex-start;
+    padding: 20px;
+}
+
+#game-container {
+    background-color: #ffffff;
+    border: 3px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    width: 400px; 
+    height: 400px; 
+    position: relative; 
+    overflow: hidden;
+}
+
+/* --- Estilos da Informação Lateral (Direita) --- */
+
+#side-info {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    padding: 25px;
+    background-color: #222; 
+    border-radius: 10px;
+    color: white;
+}
+
+#placar {
+    margin-bottom: 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.8; /* Aumenta o espaçamento entre as linhas */
+    text-align: center;
+}
+
+#placar span {
+    color: #4cd964; /* Destaca os valores com uma cor verde */
+    font-size: 1.1em;
+}
+
+/* Garante que o contador de tempo tenha um estilo que chame a atenção */
+#tempo-restante {
+    font-size: 1.3em !important; 
+    color: #ff9500 !important; /* Cor laranja para o tempo */
+}
+
+
+/* --- Estilo do Botão de Iniciar --- */
+
+#iniciar-jogo {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px #388e3c;
+    transition: background-color 0.2s;
+}
+
+#iniciar-jogo:active {
+    background-color: #388e3c;
+    box-shadow: 0 2px #388e3c;
+    transform: translateY(2px);
+}
+
+/* --- Estilo do Botão Alvo --- */
+
+#botao-alvo {
+    width: 50px;
+    height: 50px;
+    background-color: red; 
+    border-radius: 50%; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    cursor: pointer;
+    transition: left 1s ease-out, top 1s ease-out, background-color 0.2s; 
+}
+
+#botao-alvo:active {
+    opacity: 0.8; 
+    transform: scale(0.95) translate(-50%, -50%);
+}
